@@ -2,12 +2,13 @@ package cilabo.main;
 
 public class ExperienceParameter {
 
-	public static CLASS_LABEL classlabel = CLASS_LABEL.Single; //クラスラベル
+	public static CLASS_LABEL classlabel = CLASS_LABEL.Fairness; //クラスラベル
 
 	/**データセットのクラスラベル方式 */
 	public static enum CLASS_LABEL{
 		Single, //単一のクラスラベル
-		Multi //複数のクラスラベル
+		Multi, //複数のクラスラベル
+        Fairness //Fairnessデータセットを用いる場合
 	}
 
 	public static enum DIVISION_TYPE{

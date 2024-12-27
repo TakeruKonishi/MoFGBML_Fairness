@@ -13,12 +13,13 @@ import cilabo.data.pattern.impl.Pattern_Basic;
 import cilabo.data.pattern.impl.Pattern_MultiClass;
 import cilabo.fuzzy.rule.consequent.classLabel.impl.ClassLabel_Basic;
 import cilabo.fuzzy.rule.consequent.classLabel.impl.ClassLabel_Multi;
+import cilabo.labo.developing.fairness.FairnessPattern;
 import cilabo.main.Consts;
 import cilabo.main.ExperienceParameter;
 
 /**
  * データセット入力用メソッド群
- * @author Takigawa Hiroki
+ * @author Takeru Konishi
  */
 public class Input {
 
@@ -29,6 +30,8 @@ public class Input {
 	 */
 	public static DataSet<?> inputDataSet(String fileName) {
 		switch(ExperienceParameter.classlabel) {
+	        case Fairness:
+		        return inputDataSet_Fairness(fileName);
 			case Multi:
 				return inputDataSet_MultiLabel(fileName);
 			case Single:
@@ -118,7 +121,49 @@ public class Input {
 	}
 
 	/**
-	 * ファイル名を指定して複数クラスラベルのデータセットをロード
+	 *
+	 * <h1>Input File for Fairness Classification Dataset</h1>
+	 * @param fileName : String
+	 * @return 入力済みDataSet
+	 */
+	public static DataSet<FairnessPattern> inputDataSet_Fairness(String fileName) {
+		List<double[]> lines = inputDataAsList(fileName);
+
+		// The first row is parameters of dataset
+		DataSet<FairnessPattern> data = new DataSet<FairnessPattern>(
+				(int)lines.get(0)[0],
+				(int)lines.get(0)[1],
+				(int)lines.get(0)[2]);
+		lines.remove(0);
+
+		// Later second row are patterns
+		for(int n = 0; n < data.getDataSize(); n++) {
+			double[] line = lines.get(n);
+
+			int id = n;
+			double[] vector = new double[data.getNdim()];
+			int a;	//sensitive attribute
+			Integer C;
+
+			for(int i = 0; i < vector.length; i++) {
+				vector[i] = line[i];
+			}
+			a = (int)line[data.getNdim()];
+			C = (int)line[data.getNdim()+1];
+
+			AttributeVector inputVector = new AttributeVector(vector);
+			ClassLabel_Basic classLabel = new ClassLabel_Basic(C);
+
+			FairnessPattern pattern = new FairnessPattern(id, inputVector, classLabel, a);
+
+			data.addPattern(pattern);
+		}
+
+		return data;
+	}
+
+	/**
+	 * ファイル名を指定して単一クラスラベルのデータセットをロード
 	 * @param trainFile 学習用データセットのパス
 	 * @param testFile 評価用データセットのパス
 	 */
@@ -147,7 +192,7 @@ public class Input {
 	}
 
 	/**
-	 * ファイル名を指定して単一クラスラベルのデータセットをロード
+	 * ファイル名を指定して複数クラスラベルのデータセットをロード
 	 * @param trainFile 学習用データセットのパス
 	 * @param testFile 評価用データセットのパス
 	 */
@@ -166,6 +211,35 @@ public class Input {
 		Consts.CLASS_LABEL_NUMBER = train.getCnum();
 
 		DataSet<Pattern_MultiClass> test = Input.inputDataSet_MultiLabel(testFile);
+		DataSetManager.getInstance().addTests(test);
+
+		if(Objects.isNull(DataSetManager.getInstance().getTrains())) {
+			throw new IllegalArgumentException("failed to initialise trains@TrainTestDatasetManager.loadTrainTestFiles()");}
+		else if(Objects.isNull(DataSetManager.getInstance().getTests())) {
+			throw new IllegalArgumentException("failed to initialise tests@TrainTestDatasetManager.loadTrainTestFiles()");}
+		return;
+	}
+
+	/**
+	 * ファイル名を指定してFairnessデータセットをロード
+	 * @param trainFile 学習用データセットのパス
+	 * @param testFile 評価用データセットのパス
+	 */
+	public static void loadTrainTestFiles_Fairness(String trainFile, String testFile) {
+
+		/* Load Dataset ======================== */
+		if(Objects.isNull(DataSetManager.getInstance().getTrains())) {
+			throw new IllegalArgumentException("argument [trainFile] is null @" + "TrainTestDatasetManager.loadTrainTestFiles()");}
+		if(Objects.isNull(DataSetManager.getInstance().getTrains())) {
+			throw new IllegalArgumentException("argument [testFile] is null @" + "TrainTestDatasetManager.loadTrainTestFiles()");}
+
+		DataSet<FairnessPattern> train = Input.inputDataSet_Fairness(trainFile);
+		DataSetManager.getInstance().addTrains(train);
+		Consts.DATA_SIZE = train.getDataSize();
+		Consts.ATTRIBUTE_NUMBER = train.getNdim();
+		Consts.CLASS_LABEL_NUMBER = train.getCnum();
+
+		DataSet<FairnessPattern> test = Input.inputDataSet_Fairness(testFile);
 		DataSetManager.getInstance().addTests(test);
 
 		if(Objects.isNull(DataSetManager.getInstance().getTrains())) {

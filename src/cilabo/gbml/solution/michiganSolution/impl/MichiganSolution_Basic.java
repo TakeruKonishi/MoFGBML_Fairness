@@ -47,7 +47,7 @@ public final class MichiganSolution_Basic<RuleObject extends Rule<?, ?, ?, ?, ?,
 		do {
 			cnt++;
 			this.createRule();
-			if(cnt > 1000) {System.err.print("number of trials to generaete rule is more than 1000");}
+			if(cnt > 1000) {System.err.print("number of trials to generaete rule is more than 1000 @MichiganSolution_Basic");}
 		}while(this.rule.isRejectedClassLabel());
 	}
 
@@ -98,7 +98,7 @@ public final class MichiganSolution_Basic<RuleObject extends Rule<?, ?, ?, ?, ?,
 
 		this.createRule(pattern);
 
-		//生成不可ルールの場合はランダムなパターンをから再生成
+		//生成不可ルールの場合はランダムなパターンから再生成
 		DataSet<?> train = DataSetManager.getInstance().getTrains().get(0);
 		while(this.rule.isRejectedClassLabel()) {
 			int index = Random.getInstance().getGEN().nextInt(train.getDataSize());

@@ -18,15 +18,24 @@ public final class Antecedent_Basic extends AbstractAntecedent{
 	@Override
 	public double[] getCompatibleGrade(int[] antecedentIndex, AttributeVector attributeVector) {
 		double[] grade = new double[antecedentIndex.length];
+		/*german*/
+		/*int[] count_negative = {4, 0, 5, 10, 0, 5, 5, 0, 4, 3, 0, 4, 0, 3, 3, 0, 4, 0, 2, 2};*/
+		/*propublica-recidivism*/
+		/*int[] count_negative = {2,0,3,6,0,0,0,0,2,437,0,3};*/
+		/*adult*/
+		/*int[] count_negative = {0,7,0,16,0,7,14,6,5,2,0,0,0,41};*/
 		if(antecedentIndex.length != attributeVector.getNumberOfDimension()) {
 			throw new IllegalArgumentException("antecedentIndex and pattern must be same length");
 		}else {
 			for(int i = 0; i < attributeVector.getNumberOfDimension(); i++) {
-				if(antecedentIndex[i] <= 0 && attributeVector.getAttributeValue(i) <= 0) {
+				if(antecedentIndex[i] < 0 && attributeVector.getAttributeValue(i) < 0) {
 					// categorical
 					if(antecedentIndex[i] == (int)attributeVector.getAttributeValue(i)) grade[i] = 1.0;
 					else grade[i] = 0.0;
-				}else if(antecedentIndex[i] >= 0 && attributeVector.getAttributeValue(i) >= 0){
+					/*else grade[i] = 0.1;*/
+					/*else grade[i] = 1.0/(antecedentIndex.length);*/
+					/*else grade[i] = 1.0/count_negative[i];*/
+				}else if(antecedentIndex[i] > 0 && attributeVector.getAttributeValue(i) >= 0){
 					// numerical
 					grade[i] = this.getFuzzySet(i, antecedentIndex[i]).getMembershipValue((float)attributeVector.getAttributeValue(i));
 				}else if(antecedentIndex[i] == 0) {

@@ -3,8 +3,10 @@ package cilabo.gbml.algorithm;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 import org.uma.jmetal.algorithm.impl.AbstractEvolutionaryAlgorithm;
@@ -71,6 +73,9 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution<?>>
 
 	private Observable<Map<String, Object>> observable;
 
+	/*Set for the Archive*/
+	private Set<S> ArchivePopulation;
+
 	/** Constructor */
 	public HybridMoFGBMLwithNSGAII(
 			/* Arguments */
@@ -120,6 +125,9 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution<?>>
 
 		this.algorithmStatusData = new HashMap<>();
 		this.observable = new DefaultObservable<>("Hybrid MoFGBML with NSGA-II algorithm");
+
+		/*Set for the Archive*/
+		this.ArchivePopulation = new HashSet<>();
 	}
 
 	@Override
@@ -136,6 +144,17 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution<?>>
 		population = evaluatePopulation(population);
 		/* 未勝利個体削除*/
 		population = removeNoWinnerMichiganSolution(population);
+
+		/*生成した個体群をアーカイブに追加*/
+		for (S solution : population) {
+		    PittsburghSolution<?> copiedSolution = solution.copy();
+		    ArchivePopulation.add((S) copiedSolution);
+		}
+
+		/*アーカイブから非劣解を抽出（ただし，計算量大きくなるのでコメントアウト）*/
+		/*使用する際は，SetからListへの変換が必要*/
+		//ArchivePopulation = SolutionListUtils.getNonDominatedSolutions(ArchivePopulation);
+
 		/* JMetal progress initialization */
 		initProgress();
 
@@ -162,6 +181,16 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution<?>>
 			/* 個体群更新・環境選択 - Environmental Selection */
 			population = replacement(population, offspringPopulation);
 
+			/*生成した個体群をアーカイブに追加*/
+			for (S solution : population) {
+			    PittsburghSolution<?> copiedSolution = solution.copy();
+			    ArchivePopulation.add((S) copiedSolution);
+			}
+
+			/*アーカイブから非劣解を抽出（ただし，計算量大きくなるのでコメントアウト）*/
+			/*使用する際は，SetからListへの変換が必要*/
+			//ArchivePopulation = SolutionListUtils.getNonDominatedSolutions(ArchivePopulation);
+
 			/* JMetal progress update */
 			updateProgress();
 		}
@@ -180,6 +209,20 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution<?>>
 
 	    observable.setChanged();
 	    observable.notifyObservers(algorithmStatusData);
+
+	    String sep = File.separator;
+	    Integer evaluations = (Integer)algorithmStatusData.get("EVALUATIONS");
+
+	    if(evaluations != null) {
+	        new PittsburghSolutionListOutput((List<PittsburghSolution<?>>) this.getResult())
+            .setVarFileOutputContext(new DefaultFileOutputContext(outputRootDir + sep + String.format("VAR-%d.csv", evaluations), ","))
+            .setFunFileOutputContext(new DefaultFileOutputContext(outputRootDir + sep + String.format("FUN-%d.csv", evaluations), ","))
+            .print();
+	    }
+		else {
+			JMetalLogger.logger.warning(getClass().getName()
+			+ ": The algorithm has not registered yet any info related to the EVALUATIONS key");
+		}
 	}
 
 
@@ -209,10 +252,32 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution<?>>
 	    		}
 	    		System.out.println(); System.out.println();
 
-	    	    new PittsburghSolutionListOutput((List<PittsburghSolution<?>>) this.getResult())
-		            .setVarFileOutputContext(new DefaultFileOutputContext(outputRootDir + sep + String.format("VAR-%010d.csv", evaluations), ","))
-		            .setFunFileOutputContext(new DefaultFileOutputContext(outputRootDir + sep + String.format("FUN-%010d.csv", evaluations), ","))
-		            .print();
+	    		/*出力された数値が0埋めで同じ桁数になるversion*/
+	    	    /*new PittsburghSolutionListOutput((List<PittsburghSolution<?>>) this.getResult())
+	            .setVarFileOutputContext(new DefaultFileOutputContext(outputRootDir + sep + String.format("VAR-%010d.csv", evaluations), ","))
+	            .setFunFileOutputContext(new DefaultFileOutputContext(outputRootDir + sep + String.format("FUN-%010d.csv", evaluations), ","))
+	            .print();*/
+
+	    		/*出力された数値が0埋めされないversion*/
+    	        new PittsburghSolutionListOutput((List<PittsburghSolution<?>>) this.getResult())
+                .setVarFileOutputContext(new DefaultFileOutputContext(outputRootDir + sep + String.format("VAR-%d.csv", evaluations), ","))
+                .setFunFileOutputContext(new DefaultFileOutputContext(outputRootDir + sep + String.format("FUN-%d.csv", evaluations), ","))
+                .print();
+
+    	        /*frequencyごとにアーカイブ出力（容量重すぎるので，いったんコメントアウト）*/
+    	        /*使用する際は，SetからListへの変換が必要*/
+    	        /*new PittsburghSolutionListOutput((List<PittsburghSolution<?>>) this.getArchivePopulation())
+                .setVarFileOutputContext(new DefaultFileOutputContext(outputRootDir + sep + String.format("VARARC-%d.csv", evaluations), ","))
+                .setFunFileOutputContext(new DefaultFileOutputContext(outputRootDir + sep + String.format("FUNARC-%d.csv", evaluations), ","))
+                .print();*/
+
+    	        /*最終的なアーカイブを出力（FUNARCはresultsでカバーできるので不要）（非劣解抽出前なので，コメントアウト）*/
+    	        /*使用する際は，SetからListへの変換が必要*/
+    	 	    /*if(evaluations == Consts.TERMINATE_EVALUATION) {
+	    	        new PittsburghSolutionListOutput((List<PittsburghSolution<?>>) this.getArchivePopulation())
+                    .setVarFileOutputContext(new DefaultFileOutputContext(outputRootDir + sep + String.format("VARARC-%d.csv", evaluations), ","))
+                    .print();
+	    	    }*/
 
 	    		Element population = XML_manager.getInstance().createElement(XML_TagName.population);
 
@@ -269,6 +334,7 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution<?>>
 		/* 未勝利個体削除*/
 	    IntStream.range(0, population.size())
 	        .forEach(i -> ((AbstractPittsburghFGBML)problem).removeNoWinnerMichiganSolution(population.get(i)));
+	        //.forEach(i -> ((MOP1_fairness)problem).removeNoWinnerMichiganSolution(population.get(i)));
 		return population;
 	}
 
@@ -276,6 +342,12 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution<?>>
 	public List<S> getResult(){
 		return SolutionListUtils.getNonDominatedSolutions(getPopulation());
 	}
+
+	/*アーカイブから非劣解を抽出（現時点では不要なのでコメントアウト）*/
+	/*使用する際は，SetからListへの変換が必要*/
+	/*public List<S> getResultArchive(){
+		return SolutionListUtils.getNonDominatedSolutions(ArchivePopulation);
+	}*/
 
 	@Override
 	public String getName() {
@@ -303,5 +375,16 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution<?>>
 	public long getEvaluations() {
 		return evaluations;
 	}
+
+	/*Getter for Archive*/
+	public Set<S> getArchivePopulation(){
+		return ArchivePopulation;
+	}
+
+	/*Setter for Archive*/
+	public void setArchivePopulation(Set<S> ArchivePopulation) {
+		this.ArchivePopulation = ArchivePopulation;
+	}
+
 
 }

@@ -147,7 +147,7 @@ public class MoFGBML_Basic_Main {
 		KnowledgeFactory.create2_3_4_5();
 
 		List<Pair<Integer, Integer>> bounds_Michigan = AbstractMichiganSolution.makeBounds();
-		int numberOfObjectives_Michigan = 2;
+		int numberOfObjectives_Michigan = 1;
 		int numberOfConstraints_Michigan = 0;
 
 		int numberOfvariables_Pittsburgh = Consts.INITIATION_RULE_NUM;
