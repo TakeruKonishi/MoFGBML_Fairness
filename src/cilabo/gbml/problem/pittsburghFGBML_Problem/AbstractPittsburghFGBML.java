@@ -46,9 +46,9 @@ public abstract class AbstractPittsburghFGBML <pittsburghSolutionObject extends 
 			}
 		}
 		/*ルール数が第2目的でない場合はコメントアウト*/
-		//NumberOfRules<PittsburghSolution<michiganSolution>> function2 = new NumberOfRules<PittsburghSolution<michiganSolution>>();
-		//double f2 = function2.function(solution);
-		//solution.setObjective(OBJECTIVES_FOR_PITTSBURGH.NumberOfRule.toInt(), f2);
+		/*NumberOfRules<PittsburghSolution<michiganSolution>> function2 = new NumberOfRules<PittsburghSolution<michiganSolution>>();
+		double f2 = function2.function(solution);
+		solution.setObjective(OBJECTIVES_FOR_PITTSBURGH.NumberOfRule.toInt(), f2);*/
 
 		if(solution.getNumberOfVariables() == 0) {
 			throw new ArithmeticException("PittsburghSolution has no winner michiganSolution");
