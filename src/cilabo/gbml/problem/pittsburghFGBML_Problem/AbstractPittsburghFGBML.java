@@ -5,10 +5,12 @@ import org.uma.jmetal.problem.Problem;
 
 import cilabo.data.DataSet;
 import cilabo.fuzzy.classifier.Classifier;
+import cilabo.gbml.objectivefunction.pittsburgh.NumberOfRules;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution.MichiganSolutionBuilder;
 import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
 import cilabo.gbml.solution.util.attribute.NumberOfWinner;
+import cilabo.main.ExperienceParameter.OBJECTIVES_FOR_PITTSBURGH;
 
 public abstract class AbstractPittsburghFGBML <pittsburghSolutionObject extends PittsburghSolution<michiganSolution>,
 		michiganSolution extends MichiganSolution<?>>
@@ -46,9 +48,9 @@ public abstract class AbstractPittsburghFGBML <pittsburghSolutionObject extends 
 			}
 		}
 		/*ルール数が第2目的でない場合はコメントアウト*/
-		/*NumberOfRules<PittsburghSolution<michiganSolution>> function2 = new NumberOfRules<PittsburghSolution<michiganSolution>>();
+		NumberOfRules<PittsburghSolution<michiganSolution>> function2 = new NumberOfRules<PittsburghSolution<michiganSolution>>();
 		double f2 = function2.function(solution);
-		solution.setObjective(OBJECTIVES_FOR_PITTSBURGH.NumberOfRule.toInt(), f2);*/
+		solution.setObjective(OBJECTIVES_FOR_PITTSBURGH.NumberOfRule.toInt(), f2);
 
 		if(solution.getNumberOfVariables() == 0) {
 			throw new ArithmeticException("PittsburghSolution has no winner michiganSolution");
