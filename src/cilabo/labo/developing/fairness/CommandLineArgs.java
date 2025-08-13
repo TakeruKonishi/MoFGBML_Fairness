@@ -24,10 +24,13 @@ public class CommandLineArgs extends AbstractArgs {
 	/** MOPインデックス **/
 	public static int mopIndex;
 
+	/** シード **/
+	public static int seed;
+
 	// ************************************************************
 	@Override
 	protected void load(String[] args) {
-		int n = 7;
+		int n = 8;
 		if(args.length < n) {
 			System.out.println("Need n=" + String.valueOf(n) + " arguments.");
 			System.out.println("---");
@@ -52,5 +55,7 @@ public class CommandLineArgs extends AbstractArgs {
 		testFile = args[5];
 
 		mopIndex = Integer.parseInt(args[6]);
+
+		seed = Integer.parseInt(args[7]);
 	}
 }
