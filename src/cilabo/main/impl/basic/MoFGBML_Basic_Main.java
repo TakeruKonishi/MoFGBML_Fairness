@@ -111,11 +111,10 @@ public class MoFGBML_Basic_Main {
 
 		/* Load Dataset ======================== */
 		Input.loadTrainTestFiles_Basic(MoFGBML_Basic_CommandLineArgs.trainFile, MoFGBML_Basic_CommandLineArgs.testFile);
-		DataSet<Pattern_Basic> test = (DataSet<Pattern_Basic>) DataSetManager.getInstance().getTests().get(0);
 		DataSet<Pattern_Basic> train = (DataSet<Pattern_Basic>) DataSetManager.getInstance().getTrains().get(0);
+		DataSet<Pattern_Basic> test = (DataSet<Pattern_Basic>) DataSetManager.getInstance().getTests().get(0);
 
-
-		/** XML ファイル出力ようインスタンスの生成*/
+		/** XML ファイル出力用インスタンスの生成*/
 		XML_manager.getInstance();
 
 		/* Run MoFGBML algorithm =============== */
@@ -139,7 +138,7 @@ public class MoFGBML_Basic_Main {
 	 *
 	 */
 	public static void HybridStyleMoFGBML (DataSet<Pattern_Basic> train, DataSet<Pattern_Basic> test) {
-		Random.getInstance().initRandom(2022);
+		Random.getInstance().initRandom(2000);
 		String sep = File.separator;
 
 		Parameters parameters = new Parameters(train);

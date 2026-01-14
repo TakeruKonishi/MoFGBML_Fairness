@@ -164,7 +164,7 @@ public class HybridMoFGBMLwithNSGAII <S extends PittsburghSolution<?>>
 			matingPopulation = selection(population);
 			/* 子個体群生成 - Offspring Generation */
 			offspringPopulation = reproduction(matingPopulation);
-			/* 子個体群評価 - Offsprign Evaluation */
+			/* 子個体群評価 - Offspring Evaluation */
 			offspringPopulation = evaluatePopulation(offspringPopulation);
 			/* 未勝利個体削除*/
 			offspringPopulation = removeNoWinnerMichiganSolution(offspringPopulation);

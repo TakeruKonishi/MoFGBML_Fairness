@@ -18,24 +18,24 @@ import xml.XML_manager;
  * Consts.[変数名]でアクセス可能
  *
  * 本ソース(Consts.java)の以下で指定している値はデフォルト値
- * もし、jarエクスポート後に変更したい値が出てきた場合は、
+ * もし，jarエクスポート後に変更したい値が出てきた場合は，
  * consts.propertiesに変更したい変数を書けば良い
  *     例: 「WINDOWS = 1」(in consts.properties)
- * .propertiesファイルは、Consts.setConsts(String source)メソッドによって読み込まれる
+ * .propertiesファイルは，Consts.setConsts(String source)メソッドによって読み込まれる
  *     例: Consts.setConsts("consts");  // load consts.properties
  *
  */
 public class Consts {
 
 	//Experimental Settings *********************************
-	public static int POPULATION_SIZE = 60;
-	public static int OFFSPRING_POPULATION_SIZE = 60;
-	public static int TERMINATE_GENERATION = 5000;
+	public static int POPULATION_SIZE = 50;
+	public static int OFFSPRING_POPULATION_SIZE = 50;
+	public static int TERMINATE_GENERATION = 6000;
 	public static int TERMINATE_EVALUATION = 300000;
-	public static int OUTPUT_FREQUENCY = 6000;
+	public static int OUTPUT_FREQUENCY = 3000;
 
 	//Random Number ***************************************
-	public static int RAND_SEED = 2020;
+	public static int RAND_SEED = 2000;
 
 	//OS ************************************
 	public static int WINDOWS = 0;	//Windows
@@ -49,9 +49,9 @@ public class Consts {
 	/** don't care適応確率 */
 	public static double DONT_CARE_RT = 0.8;
 	/** 初期ル―ル数 */
-	public static int INITIATION_RULE_NUM = 30;
+	public static int INITIATION_RULE_NUM = 25;
 	/** 1識別器あたりの最大ルール数 */
-	public static int MAX_RULE_NUM = 60;
+	public static int MAX_RULE_NUM = 50;
 	/** 1識別器あたりの最小ルール数 */
 	public static int MIN_RULE_NUM = 1;
 

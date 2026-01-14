@@ -20,7 +20,8 @@ def detection_async(_request):
                              _request["trainFile"],
                              _request["testFile"],
                              _request["mopIndex"],
-                             _request["seed"]])
+                             _request["seed"],
+                             _request["sensitiveIndex"]])
     
     return result
 
@@ -43,16 +44,19 @@ if __name__ == "__main__":
     Dataset = "adult"
 
     mopIndex = 1
+    sensitiveIndex = 8
+
     requests = [{"trial" : f"{i}_{j}",
                 "dataset" : Dataset, 
-                "jarFile" : "target\MoFGBML-23.0.0-SNAPSHOT-FairnessNR.jar", 
+                "jarFile" : "target\MoFGBML-23.0.0-SNAPSHOT-FairnessnonNRII.jar", 
                 "algroithmID" : f"Fairness\{Dataset}{mopIndex}",
                 "parallelCores" : "5",
                 "experimentID" : f"trial{i}{j}",
                 "trainFile" : f"dataset\\{Dataset}\\a{i}_{j}_{Dataset}-10tra.dat",
                 "testFile" : f"dataset\\{Dataset}\\a{i}_{j}_{Dataset}-10tst.dat",
                 "mopIndex" : str(mopIndex),
-                "seed": str(100 + j)} \
+                "seed": str(100 + j),
+                "sensitiveIndex": str(sensitiveIndex)} \
                 for i in range(1) for j in range(10)]
     
     for result in detection_async_parallel(requests):

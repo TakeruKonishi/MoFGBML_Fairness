@@ -38,6 +38,7 @@ import cilabo.gbml.objectivefunction.pittsburgh.Gmean;
 import cilabo.gbml.objectivefunction.pittsburgh.NumberOfRules;
 import cilabo.gbml.objectivefunction.pittsburgh.fairness.DemographicParityDifference;
 import cilabo.gbml.objectivefunction.pittsburgh.fairness.FalsePositiveRateDifference;
+import cilabo.gbml.objectivefunction.pittsburgh.fairness.IndividualDiscriminationRate;
 import cilabo.gbml.objectivefunction.pittsburgh.fairness.PositivePredictiveValuesDifference;
 import cilabo.gbml.operator.crossover.HybridGBMLcrossover;
 import cilabo.gbml.operator.crossover.MichiganCrossover;
@@ -109,9 +110,8 @@ public class Fairness_Main {
 
 		/* Load Dataset ======================== */
 		Input.loadTrainTestFiles_Fairness(CommandLineArgs.trainFile, CommandLineArgs.testFile);
-		DataSet<FairnessPattern> test = (DataSet<FairnessPattern>) DataSetManager.getInstance().getTests().get(0);
 		DataSet<FairnessPattern> train = (DataSet<FairnessPattern>) DataSetManager.getInstance().getTrains().get(0);
-
+		DataSet<FairnessPattern> test = (DataSet<FairnessPattern>) DataSetManager.getInstance().getTests().get(0);
 
 		/* Run MoFGBML algorithm =============== */
 		fairnessMoFGBML(train, test);
@@ -193,6 +193,10 @@ public class Fairness_Main {
 		case 8:
 			problem = new MOP8_fairness<MichiganSolution_Basic<Rule_Basic>>(numberOfvariables_Pittsburgh,2,0,train,michiganSolutionBuilder,classifier);
 			break;
+
+		case 100:
+			problem = new MOP_IDR<MichiganSolution_Basic<Rule_Basic>>(numberOfvariables_Pittsburgh,2,0,train,michiganSolutionBuilder,classifier);
+			break;
 		}
 
 		/* Crossover: Hybrid-style GBML specific crossover operator. */
@@ -265,7 +269,7 @@ public class Fairness_Main {
             start = end;
         }
 
-        // partitionedList内の各サブリストにgetNonDominatedSolutionsを適用し、結果を統合
+        // partitionedList内の各サブリストにgetNonDominatedSolutionsを適用し，結果を統合
         List<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> mergedList = partitionedList.stream()
                 .flatMap(list -> SolutionListUtils.getNonDominatedSolutions(list).stream())
                 .collect(Collectors.toList());
@@ -287,7 +291,7 @@ public class Fairness_Main {
 
 		//Results of final generation
 	    ArrayList<String> strs = new ArrayList<>();
-	    String str = "pop,Gmean_Dtra,Gmean_Dtst,FPR_Dtra,FPR_Dtst,PPV_Dtra,PPV_Dtst,ruleNum,RL,Cover,RW,DP_Dtra,DP_Dtst";
+	    String str = "pop,Gmean_Dtra,Gmean_Dtst,FPR_Dtra,FPR_Dtst,PPV_Dtra,PPV_Dtst,ruleNum,RL,Cover,RW,DP_Dtra,DP_Dtst,IDR_Dtra,IDR_Dtst";
 	    strs.add(str);
 
 	    for(int i = 0; i < nonDominatedSolutions.size(); i++) {
@@ -302,6 +306,8 @@ public class Fairness_Main {
 			= new NumberOfRules<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>>();
 			DemographicParityDifference<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> function5
 			= new DemographicParityDifference<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>>();
+			IndividualDiscriminationRate<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> function6
+			= new IndividualDiscriminationRate<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>>();
 
 			double Gmean_Dtra = function1.function(solution, train);
 			double Gmean_Dtst= function1.function(solution, test);
@@ -312,6 +318,8 @@ public class Fairness_Main {
 			double ruleNum = function4.function(solution);
 			double DP_Dtra = function5.function(solution, train);
 			double DP_Dtst = function5.function(solution, test);
+			double IDR_Dtra = function6.function(solution, train);
+			double IDR_Dtst = function6.function(solution, test);
 
 			double Gmean_tra = 1-Gmean_Dtra;
 			double Gmean_tst = 1-Gmean_Dtst;
@@ -368,7 +376,7 @@ public class Fairness_Main {
             double AveRW = TotalRW/(nonDominatedSolutions.get(i).getNumberOfVariables());
 
 	    	str = String.valueOf(i);
-	    	str += "," + Gmean_tra + "," + Gmean_tst + "," + FPR_Dtra + "," + FPR_Dtst + "," + PPV_Dtra + "," + PPV_Dtst + "," + ruleNum + "," + TotalRuleLength + "," + TotalCover + "," + AveRW + "," + DP_Dtra + "," + DP_Dtst;
+	    	str += "," + Gmean_tra + "," + Gmean_tst + "," + FPR_Dtra + "," + FPR_Dtst + "," + PPV_Dtra + "," + PPV_Dtst + "," + ruleNum + "," + TotalRuleLength + "," + TotalCover + "," + AveRW + "," + DP_Dtra + "," + DP_Dtst + "," + IDR_Dtra + "," + IDR_Dtst;
 	    	strs.add(str);
 	    }
 	    String fileName = Consts.EXPERIMENT_ID_DIR + sep + "results.csv";
@@ -376,7 +384,7 @@ public class Fairness_Main {
 
 	    //Results of archive population
 	    ArrayList<String> strsARC = new ArrayList<>();
-	    String strARC = "pop,Gmean_Dtra,Gmean_Dtst,FPR_Dtra,FPR_Dtst,PPV_Dtra,PPV_Dtst,ruleNum,RL,Cover,RW,DP_Dtra,DP_Dtst";
+	    String strARC = "pop,Gmean_Dtra,Gmean_Dtst,FPR_Dtra,FPR_Dtst,PPV_Dtra,PPV_Dtst,ruleNum,RL,Cover,RW,DP_Dtra,DP_Dtst,IDR_Dtra,IDR_Dtst";
 	    strsARC.add(strARC);
 
 	    for(int i = 0; i < nonDominatedSolutionsARC.size(); i++) {
@@ -391,6 +399,8 @@ public class Fairness_Main {
 			= new NumberOfRules<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>>();
 			DemographicParityDifference<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> function5ARC
 			= new DemographicParityDifference<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>>();
+			IndividualDiscriminationRate<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> function6ARC
+			= new IndividualDiscriminationRate<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>>();
 
 			double Gmean_DtraARC = function1ARC.function(solutionARC, train);
 			double Gmean_DtstARC= function1ARC.function(solutionARC, test);
@@ -401,6 +411,8 @@ public class Fairness_Main {
 			double ruleNumARC = function4ARC.function(solutionARC);
 			double DP_DtraARC = function5ARC.function(solutionARC, train);
 			double DP_DtstARC = function5ARC.function(solutionARC, test);
+			double IDR_DtraARC = function6ARC.function(solutionARC, train);
+			double IDR_DtstARC = function6ARC.function(solutionARC, test);
 
 			double Gmean_traARC = 1-Gmean_DtraARC;
 			double Gmean_tstARC = 1-Gmean_DtstARC;
@@ -457,7 +469,7 @@ public class Fairness_Main {
             double AveRWARC = TotalRWARC/(nonDominatedSolutionsARC.get(i).getNumberOfVariables());
 
 	    	strARC = String.valueOf(i);
-	    	strARC += "," + Gmean_traARC + "," + Gmean_tstARC + "," + FPR_DtraARC + "," + FPR_DtstARC + "," + PPV_DtraARC + "," + PPV_DtstARC + "," + ruleNumARC + "," + TotalRuleLengthARC + "," + TotalCoverARC + "," + AveRWARC + "," + DP_DtraARC + "," + DP_DtstARC;
+	    	strARC += "," + Gmean_traARC + "," + Gmean_tstARC + "," + FPR_DtraARC + "," + FPR_DtstARC + "," + PPV_DtraARC + "," + PPV_DtstARC + "," + ruleNumARC + "," + TotalRuleLengthARC + "," + TotalCoverARC + "," + AveRWARC + "," + DP_DtraARC + "," + DP_DtstARC + "," + IDR_DtraARC + "," + IDR_DtstARC;
 	    	strsARC.add(strARC);
 	    }
 	    String fileNameARC = Consts.EXPERIMENT_ID_DIR + sep + "resultsARC.csv";

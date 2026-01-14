@@ -27,10 +27,14 @@ public class CommandLineArgs extends AbstractArgs {
 	/** シード **/
 	public static int seed;
 
+	/** センシティブ属性が AttributeVector 内の何番目か（0 始まり） */
+    public static int sensitiveIndex;
+
+
 	// ************************************************************
 	@Override
 	protected void load(String[] args) {
-		int n = 8;
+		int n = 9;
 		if(args.length < n) {
 			System.out.println("Need n=" + String.valueOf(n) + " arguments.");
 			System.out.println("---");
@@ -57,5 +61,7 @@ public class CommandLineArgs extends AbstractArgs {
 		mopIndex = Integer.parseInt(args[6]);
 
 		seed = Integer.parseInt(args[7]);
+
+		sensitiveIndex = Integer.parseInt(args[8]);
 	}
 }

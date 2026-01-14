@@ -4,8 +4,10 @@
 package cilabo.gbml.objectivefunction.pittsburgh.fairness;
 
 import cilabo.data.DataSet;
+//import cilabo.data.InputVector;
 import cilabo.fuzzy.rule.consequent.classLabel.ClassLabel;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
+//import cilabo.gbml.solution.michiganSolution.impl.MichiganSolution_Rejected;
 import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;
 import cilabo.labo.developing.fairness.FairnessPattern;
 
@@ -25,12 +27,20 @@ public final class EqualOpportunityDifference <S extends PittsburghSolution<?>>{
 	public double function(S solution, DataSet<?> dataset) {
 
 		double[] sizeForSensitive = new double[2];  // 各グループで実際に 1 であるサンプル数
-		double[] countForSensitive = new double[2]; // 各グループで正しく 1 と分類されたサンプル数 (True Positives)
+		double[] countForSensitive = new double[2]; // 各グループで正しく 1 と識別されたサンプル数 (True Positives)
 
 		for(int p = 0; p < dataset.getDataSize(); p++) {
 
 			FairnessPattern pattern = (FairnessPattern)dataset.getPattern(p);
 			ClassLabel<Integer> trueClass = pattern.getTargetClass();
+
+			// Sensitive attribute value
+			int a = pattern.getA();
+
+			// 分母（本来 1 であるサンプル数）
+			if((int)trueClass.getClassLabelValue() == 1) {
+				sizeForSensitive[a]++;
+			}
 
 			MichiganSolution<?> winnerSolution = solution.classify(pattern);
 
@@ -42,33 +52,20 @@ public final class EqualOpportunityDifference <S extends PittsburghSolution<?>>{
 			// Classification
 			ClassLabel<Integer> classifiedClass = (ClassLabel<Integer>) winnerSolution.getClassLabel();
 
-			// Sensitive attribute value
-			int a = pattern.getA();
-
-			// 分母（本来 1 であるサンプル数）
-			if((int)trueClass.getClassLabelValue() == 1) {
-				sizeForSensitive[a]++;
-				// 分子（正しく 1 と分類されたサンプル数）
-				if((int)classifiedClass.getClassLabelValue() == 1) {
-					countForSensitive[a]++;
-				}
+			// 分子（真に 1 かつ 1 と識別されたサンプル数）
+			if((int)trueClass.getClassLabelValue() == 1 && (int)classifiedClass.getClassLabelValue() == 1) {
+				countForSensitive[a]++;
 			}
+
 		}
 
 		double[] TPR_a = new double[2];
 		for(int i = 0; i < TPR_a.length; i++) {
-			// 分母が 0 にならないように処理
+			// 分母 0 は定義不能：NaN を返して上位で扱う
 			if(sizeForSensitive[i] <= 0) {
-				if(countForSensitive[i] <= 0) {
-					TPR_a[i] = 1;
-				}
-				else {
-					TPR_a[i] = 2;
-				}
+				return Double.NaN;
 			}
-			else {
-				TPR_a[i] = countForSensitive[i] / sizeForSensitive[i];
-			}
+			TPR_a[i] = countForSensitive[i] / sizeForSensitive[i];
 		}
 
 		// Equal Opportunity の計算

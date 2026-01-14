@@ -30,9 +30,14 @@ public final class DemographicParityDifference <S extends PittsburghSolution<?>>
 		for(int p = 0; p < dataset.getDataSize(); p++) {
 
 			FairnessPattern pattern = (FairnessPattern)dataset.getPattern(p);
-			ClassLabel<Integer> trueClass = pattern.getTargetClass();
 
 			MichiganSolution<?> winnerSolution = solution.classify(pattern);
+
+			// Sensitive attribute value
+			int a = pattern.getA();
+
+			// 分母（グループごとの総サンプル数）
+			sizeForSensitive[a]++;
 
 			// rejectedならば次のパターン
 			if(winnerSolution == null) {
@@ -42,12 +47,6 @@ public final class DemographicParityDifference <S extends PittsburghSolution<?>>
 			// Classification
 			ClassLabel<Integer> classifiedClass = (ClassLabel<Integer>) winnerSolution.getClassLabel();
 
-			// Sensitive attribute value
-			int a = pattern.getA();
-
-			// 分母（グループごとの総サンプル数）
-			sizeForSensitive[a]++;
-
 			// 分子（陽性と分類されたサンプル数）
 			if((int)classifiedClass.getClassLabelValue() == 1) {
 				countForSensitive[a]++;
@@ -56,18 +55,11 @@ public final class DemographicParityDifference <S extends PittsburghSolution<?>>
 
 		double[] P_a = new double[2];
 		for(int i = 0; i < P_a.length; i++) {
-			// 分母が 0 にならないように処理
-			if(sizeForSensitive[i] <= 0) {
-				if(countForSensitive[i] <= 0) {
-					P_a[i] = 1;
-				}
-				else {
-					P_a[i] = 2;
-				}
-			}
-			else {
-				P_a[i] = countForSensitive[i] / sizeForSensitive[i];
-			}
+			// 分母 0 は定義不能：NaN を返して上位で扱う
+		    if (sizeForSensitive[i] <= 0) {
+		        return Double.NaN; 
+		    }
+		    P_a[i] = countForSensitive[i] / sizeForSensitive[i];
 		}
 
 		// Demographic Parity の計算

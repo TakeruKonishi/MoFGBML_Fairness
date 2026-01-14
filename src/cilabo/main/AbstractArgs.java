@@ -6,7 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * メンバ変数はpublic static修飾子をつける
  * コマンドライン引数をグローバル変数化するためのインターフェース
- * 実験ごとにArgsを実装して、グローバル変数を生成できる
+ * 実験ごとにArgsを実装して，グローバル変数を生成できる
  *
  */
 public abstract class AbstractArgs {

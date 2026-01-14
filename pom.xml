@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>cilabo.MoFGBML</groupId>
   <artifactId>MoFGBML</artifactId>
-  <version>23.0.0-SNAPSHOT-FairnessnonNR</version>
+  <version>23.0.0-SNAPSHOT-Fairness</version>
 
   <build>
     <sourceDirectory>src</sourceDirectory>
