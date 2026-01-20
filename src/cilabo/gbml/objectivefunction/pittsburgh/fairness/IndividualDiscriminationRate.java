@@ -71,20 +71,20 @@ public final class IndividualDiscriminationRate<S extends PittsburghSolution<?>>
             // 深いコピー：origAttrs をそのまま書き換えないように clone する
             double[] cfAttrs = Arrays.copyOf(origAttrs, origAttrs.length);
 
-            // センシティブ属性の値を反転（0/1 コードを想定）
-            if (cfAttrs[sIndex] == 0.0) {
-                cfAttrs[sIndex] = 1.0;
-            } else if (cfAttrs[sIndex] == 1.0) {
-                cfAttrs[sIndex] = 0.0;
+            // センシティブ属性の値を反転（-1/-2 コードを想定）
+            if (cfAttrs[sIndex] == -1.0) {
+                cfAttrs[sIndex] = -2.0;
+            } else if (cfAttrs[sIndex] == -2.0) {
+                cfAttrs[sIndex] = -1.0;
             } else {
-                // 想定外の値（0/1 以外）はデータ前処理の不整合として例外を投げる
+                // 想定外の値はデータ前処理の不整合として例外
                 throw new IllegalStateException(
                     "Sensitive attribute at index " + sIndex +
-                    " must be coded as 0.0 or 1.0, but found: " +
+                    " must be coded as -1.0 or -2.0, but found: " +
                     cfAttrs[sIndex]);
             }
 
-            // AttributeVector はコンストラクタ内でさらに Arrays.copyOf するので、
+            // AttributeVector はコンストラクタ内でさらに Arrays.copyOf するので，
             // cfAttrs との間にも参照の共有は発生しない
             AttributeVector cfAttrVec = new AttributeVector(cfAttrs);
 
