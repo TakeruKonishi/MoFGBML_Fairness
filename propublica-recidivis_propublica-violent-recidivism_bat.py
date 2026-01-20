@@ -45,7 +45,7 @@ def run(Dataset):
 
     requests = [{"trial" : f"{i}_{j}",
                 "dataset" : Dataset, 
-                "jarFile" : "target\MoFGBML-23.0.0-SNAPSHOT-FairnessnonNRII.jar", 
+                "jarFile" : "target\MoFGBML-23.0.0-SNAPSHOT-Fairness-Group.jar", 
                 "algorithmID" : f"Fairness\{Dataset}{mopIndex}",
                 "parallelCores" : "5",
                 "experimentID" : f"trial{i}{j}",
