@@ -44,6 +44,7 @@ import cilabo.gbml.operator.crossover.HybridGBMLcrossover;
 import cilabo.gbml.operator.crossover.MichiganCrossover;
 import cilabo.gbml.operator.crossover.PittsburghCrossover;
 import cilabo.gbml.operator.mutation.PittsburghMutation;
+import cilabo.gbml.problem.pittsburghFGBML_Problem.impl.PittsburghFGBML_Single;
 import cilabo.gbml.solution.michiganSolution.AbstractMichiganSolution;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution.MichiganSolutionBuilder;
 import cilabo.gbml.solution.michiganSolution.impl.MichiganSolution_Basic;
@@ -162,6 +163,10 @@ public class Fairness_Main {
 		Problem<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> problem = null;
 
 		switch(CommandLineArgs.mopIndex) {
+		case 0:
+			problem = new PittsburghFGBML_Single<MichiganSolution_Basic<Rule_Basic>>(numberOfvariables_Pittsburgh,1,0,train,michiganSolutionBuilder,classifier);
+			break;
+
 		case 1:
 			problem = new MOP1_fairness<MichiganSolution_Basic<Rule_Basic>>(numberOfvariables_Pittsburgh,2,0,train,michiganSolutionBuilder,classifier);
 			break;
