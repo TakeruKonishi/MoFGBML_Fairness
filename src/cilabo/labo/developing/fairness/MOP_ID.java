@@ -7,7 +7,7 @@ import org.uma.jmetal.problem.Problem;
 import cilabo.data.DataSet;
 import cilabo.fuzzy.classifier.Classifier;
 import cilabo.gbml.objectivefunction.pittsburgh.Gmean;
-import cilabo.gbml.objectivefunction.pittsburgh.fairness.IndividualDiscriminationRate;
+import cilabo.gbml.objectivefunction.pittsburgh.fairness.IndividualDiscrimination;
 import cilabo.gbml.problem.pittsburghFGBML_Problem.AbstractPittsburghFGBML;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution.MichiganSolutionBuilder;
@@ -17,10 +17,10 @@ import cilabo.gbml.solution.pittsburghSolution.impl.PittsburghSolution_Basic;
  * cilabo.gbml.problem.pittsburghFGBML_Problem.impl.PittsburghFGBML_; を参考に作成
  *
  */
-public class MOP_IDR<michiganSolution extends MichiganSolution<?>>
+public class MOP_ID<michiganSolution extends MichiganSolution<?>>
         extends AbstractPittsburghFGBML<PittsburghSolution_Basic<michiganSolution>, michiganSolution> implements Problem<PittsburghSolution_Basic<michiganSolution>> {
 
-    public MOP_IDR(
+    public MOP_ID(
         	int numberOfVariables,
         	int numberOfObjectives,
         	int numberOfConstraints,
@@ -29,7 +29,7 @@ public class MOP_IDR<michiganSolution extends MichiganSolution<?>>
         	Classifier<michiganSolution> classifier) {
         super(numberOfVariables, numberOfObjectives, numberOfConstraints,
         			train, michiganSolutionBuilder, classifier);
-        this.setName("MOP_IDR");
+        this.setName("MOP_ID");
     }
 
 	@Override
@@ -38,7 +38,7 @@ public class MOP_IDR<michiganSolution extends MichiganSolution<?>>
 		Gmean<PittsburghSolution_Basic<michiganSolution>> function1 = new Gmean<PittsburghSolution_Basic<michiganSolution>>();
 		double f1 = function1.function(solution, train);
 		/* The second objective */
-		IndividualDiscriminationRate<PittsburghSolution_Basic<michiganSolution>> function2 = new IndividualDiscriminationRate<PittsburghSolution_Basic<michiganSolution>>();
+		IndividualDiscrimination<PittsburghSolution_Basic<michiganSolution>> function2 = new IndividualDiscrimination<PittsburghSolution_Basic<michiganSolution>>();
 		double f2 = function2.function(solution, train);
 
 		// Gmean is a maximization objective: Calculate 1-Gmean and convert to minimization
@@ -82,7 +82,7 @@ public class MOP_IDR<michiganSolution extends MichiganSolution<?>>
 
 	@Override
 	public String toString() {
-		return "MOP_IDR [michiganSolutionBuilder=" + michiganSolutionBuilder
+		return "MOP_ID [michiganSolutionBuilder=" + michiganSolutionBuilder
 				+ ", classifier=" + classifier + "]";
 	}
 

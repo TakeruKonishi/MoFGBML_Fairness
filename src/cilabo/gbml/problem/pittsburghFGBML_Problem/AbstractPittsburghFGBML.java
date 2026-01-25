@@ -5,7 +5,7 @@ import org.uma.jmetal.problem.Problem;
 
 import cilabo.data.DataSet;
 import cilabo.fuzzy.classifier.Classifier;
-import cilabo.gbml.objectivefunction.pittsburgh.fairness.IndividualDiscriminationRate;
+import cilabo.gbml.objectivefunction.pittsburgh.fairness.IndividualDiscrimination;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution;
 import cilabo.gbml.solution.michiganSolution.MichiganSolution.MichiganSolutionBuilder;
 import cilabo.gbml.solution.pittsburghSolution.PittsburghSolution;

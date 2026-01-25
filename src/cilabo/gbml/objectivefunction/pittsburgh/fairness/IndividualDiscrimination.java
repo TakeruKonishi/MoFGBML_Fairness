@@ -15,9 +15,9 @@ import cilabo.labo.developing.fairness.CommandLineArgs;
  *   proportion of samples whose prediction changes
  *   when only the sensitive attribute is flipped.
  */
-public final class IndividualDiscriminationRate<S extends PittsburghSolution<?>> {
+public final class IndividualDiscrimination<S extends PittsburghSolution<?>> {
 
-    public IndividualDiscriminationRate() {}
+    public IndividualDiscrimination() {}
 
     /**
      * @param solution 評価対象の Pittsburgh 個体
