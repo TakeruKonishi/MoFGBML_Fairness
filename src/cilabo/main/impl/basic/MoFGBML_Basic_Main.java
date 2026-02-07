@@ -138,7 +138,7 @@ public class MoFGBML_Basic_Main {
 	 *
 	 */
 	public static void HybridStyleMoFGBML (DataSet<Pattern_Basic> train, DataSet<Pattern_Basic> test) {
-		Random.getInstance().initRandom(2000);
+		Random.getInstance().initRandom(Consts.RAND_SEED);
 		String sep = File.separator;
 
 		Parameters parameters = new Parameters(train);
