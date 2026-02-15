@@ -35,6 +35,7 @@ import cilabo.fuzzy.rule.impl.Rule_Basic;
 import cilabo.gbml.algorithm.HybridMoFGBMLwithNSGAII;
 import cilabo.gbml.objectivefunction.michigan.RuleLength;
 import cilabo.gbml.objectivefunction.pittsburgh.Gmean;
+import cilabo.gbml.objectivefunction.pittsburgh.GmeanNoSideEffect;
 import cilabo.gbml.objectivefunction.pittsburgh.NumberOfRules;
 import cilabo.gbml.objectivefunction.pittsburgh.fairness.DemographicParityDifference;
 import cilabo.gbml.objectivefunction.pittsburgh.fairness.FalsePositiveRateDifference;
@@ -303,6 +304,8 @@ public class Fairness_Main {
 	    	PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>> solution = nonDominatedSolutions.get(i);
 			Gmean<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> function1
 				= new Gmean<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>>();
+			GmeanNoSideEffect<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> function1nse
+			= new GmeanNoSideEffect<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>>();
 			FalsePositiveRateDifference<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> function2
 			= new FalsePositiveRateDifference<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>>();
 			PositivePredictiveValuesDifference<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> function3
@@ -315,7 +318,7 @@ public class Fairness_Main {
 			= new IndividualDiscrimination<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>>();
 
 			double Gmean_Dtra = function1.function(solution, train);
-			double Gmean_Dtst= function1.function(solution, test);
+			double Gmean_Dtst= function1nse.function(solution, test);
 			double FPR_Dtra = function2.function(solution, train);
 			double FPR_Dtst = function2.function(solution, test);
 			double PPV_Dtra = function3.function(solution, train);
@@ -396,6 +399,8 @@ public class Fairness_Main {
 	    	PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>> solutionARC = nonDominatedSolutionsARC.get(i);
 			Gmean<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> function1ARC
 				= new Gmean<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>>();
+			GmeanNoSideEffect<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> function1nseARC
+			= new GmeanNoSideEffect<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>>();
 			FalsePositiveRateDifference<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> function2ARC
 			= new FalsePositiveRateDifference<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>>();
 			PositivePredictiveValuesDifference<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> function3ARC
@@ -408,7 +413,7 @@ public class Fairness_Main {
 			= new IndividualDiscrimination<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>>();
 
 			double Gmean_DtraARC = function1ARC.function(solutionARC, train);
-			double Gmean_DtstARC= function1ARC.function(solutionARC, test);
+			double Gmean_DtstARC= function1nseARC.function(solutionARC, test);
 			double FPR_DtraARC = function2ARC.function(solutionARC, train);
 			double FPR_DtstARC = function2ARC.function(solutionARC, test);
 			double PPV_DtraARC = function3ARC.function(solutionARC, train);

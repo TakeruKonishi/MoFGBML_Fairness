@@ -37,6 +37,7 @@ import cilabo.fuzzy.rule.consequent.factory.impl.MoFGBML_Learning;
 import cilabo.fuzzy.rule.impl.Rule_Basic;
 import cilabo.gbml.algorithm.HybridMoFGBMLwithNSGAII;
 import cilabo.gbml.objectivefunction.pittsburgh.ErrorRate;
+import cilabo.gbml.objectivefunction.pittsburgh.ErrorRateNoSideEffect;
 import cilabo.gbml.operator.crossover.HybridGBMLcrossover;
 import cilabo.gbml.operator.crossover.MichiganCrossover;
 import cilabo.gbml.operator.crossover.PittsburghCrossover;
@@ -232,8 +233,8 @@ public class MoFGBML_Basic_Main {
 
 	    for(int i = 0; i < nonDominatedSolutions.size(); i++) {
 	    	PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>> solution = nonDominatedSolutions.get(i);
-			ErrorRate<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> function1
-				= new ErrorRate<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>>();
+	    	ErrorRateNoSideEffect<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>> function1
+				= new ErrorRateNoSideEffect<PittsburghSolution_Basic<MichiganSolution_Basic<Rule_Basic>>>();
 			double errorRate = function1.function(solution, test);
 
 	    	str = String.valueOf(i);
