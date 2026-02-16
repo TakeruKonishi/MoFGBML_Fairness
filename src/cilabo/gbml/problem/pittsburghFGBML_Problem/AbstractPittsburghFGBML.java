@@ -53,9 +53,9 @@ public abstract class AbstractPittsburghFGBML <pittsburghSolutionObject extends 
 		solution.setObjective(OBJECTIVES_FOR_PITTSBURGH.NumberOfRule.toInt(), f2);*/
 
 		/*IDRが第2目的でない場合はコメントアウト*/
-		/*IndividualDiscriminationRate<PittsburghSolution<michiganSolution>> function2 = new IndividualDiscriminationRate<PittsburghSolution<michiganSolution>>();
+		IndividualDiscrimination<PittsburghSolution<michiganSolution>> function2 = new IndividualDiscrimination<PittsburghSolution<michiganSolution>>();
 		double f2 = function2.function(solution, train);
-		solution.setObjective(1, f2);*/
+		solution.setObjective(1, f2);
 
 		if(solution.getNumberOfVariables() == 0) {
 			throw new ArithmeticException("PittsburghSolution has no winner michiganSolution");
